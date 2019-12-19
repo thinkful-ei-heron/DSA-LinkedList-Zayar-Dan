@@ -220,7 +220,7 @@ BONUS: Solve this problem using recursive algorithm (and vice versa).
 //O(n)
 //send the head of the list - if you follow the next pointer of the head,
 //you get to see the whole list. You don't have to send the whole list
-* /
+
 function reverseList(node) {
   //what if 0 node in list
   if (node == null) {

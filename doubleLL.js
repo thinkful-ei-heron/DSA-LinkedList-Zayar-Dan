@@ -1,170 +1,166 @@
+
+/*
+#### Doubly linked list
+Implement a doubly linked list. The primary functions of the doubly linked
+list would be insert (First, Last, Before, After, and insertAt), remove, and find.
+Write a function `mainDLL`. Within the function create a doubly linked list called `DLL`
+and add the following items in your doubly linked list.
+`Aquaria, Caprica, Gemenon, Picon, Sagittaron`
+
+
+ #### Reverse a DLL
+ Given the doubly linked list above, write a program that reverses the doubly linked list. How is this implementation different than reversing the singly linked list?
+
+
+ */
+
 class _Node {
   constructor(value, next, prev) {
-    this.value = value;
-    this.next = next;
-    this.prev = prev
+    this.value = value,
+      this.next = next,
+      this.prev = prev;
   }
 }
 
-class DoublyLinkedList {
+class DLinkedList {
   constructor() {
     this.head = null;
+    this.tail = null;
   }
   insertFirst(item) {
-    this.head = new _Node(item, this.head, null);
+    let newNode = new _Node(item, this.head, null);
+    if (this.head !== null) {
+      this.head.prev = newNode;
+    }
+    this.head = newNode;
+    if (this.tail === null) {
+      this.tail = newNode;
+    }
   }
-
   insertLast(item) {
+    let newNode = new _Node(item, null, this.tail);
+    if (this.tail !== null) {
+      this.tail.next = newNode;
+    }
+    this.tail = newNode;
     if (this.head === null) {
-      this.insertFirst(item);
-    } else {
-      let tempNode = this.head;
-      while (tempNode.next !== null) {
-        tempNode = tempNode.next;
+      this.head = newNode;
+    }
+  }
+  insertAfter(item, prevItem) {
+    let currentNode = this.head;
+    while (currentNode.value !== prevItem) {
+      if (currentNode === null) {
+        console.log('Item not found');
+        return;
       }
-      tempNode.next = new _Node(item, null, tempNode);
+      currentNode = currentNode.next;
+    }
+    if (currentNode === this.last) {
+      insertLast(item);
+    }
+    else {
+      let newNode = new _Node(item, currentNode.next, currentNode);
+      newNode.next = currentNode.next;
+      newNode.prev = currentNode;
+      currentNode.next.previous = newNode;
+      currentNode.next = newNode;
     }
   }
-
-  insertBefore(key, item) {
-    let currNode = this.find(key)
-    let tempNode = new _Node(item, currNode, currNode.prev)
-    currNode.prev.next = tempNode
-    currNode.prev = tempNode;
-
-  }
-
-  insertAfter(key, item) {
-    let currNode = this.find(key)
-    let tempNode = new _Node(item, currNode.next, currNode)
-    currNode.next.prev = tempNode
-    currNode.next = tempNode;
-
-
-  }
-
-  insertAt(position, item) {
-    let currNode = this.head
-    for (let i = 0; i <= position; i++) {
-      currNode = currNode.next
-    }
-    let tempNode = new _Node(item, currNode, currNode.prev)
-    currNode.prev.next = tempNode
-    currNode.prev = tempNode;
-
-  }
-
-  find(item) {
-    // Start at the head
-    let currNode = this.head;
-    // If the list is empty
-    if (!this.head) {
-      return null;
-    }
-    // Check for the item
-    while (currNode.value !== item) {
-      /* Return null if it's the end of the list
-           and the item is not on the list */
-      if (currNode.next === null) {
-        return null;
-      } else {
-        // Otherwise, keep looking
-        currNode = currNode.next;
-      }
-    }
-    // Found it
-    return currNode;
-  }
-
-
-
   remove(item) {
-    // If the list is empty
     if (!this.head) {
       return null;
     }
-    // If the node to be removed is head, make the next node head
-    if (this.head.value === item) {
-      this.head = this.head.next;
-      this.head.prev = null;
-      return;
+    let current = this.head;
+    while (current.value !== item) {
+      current = current.next;
+      if (current === null) {
+        console.log('Item to remove is not on the list');
+        return null;
+      }
     }
-    // Start at the head
-    let currNode = this.head;
+    //found it - now remove it
 
-    while (currNode !== null && currNode.value !== item) {
-      currNode = currNode.next;
+    //if the node to be removed is head, make the next node head
+    if (current === this.head) {
+      this.head = current.next;
+      //return;
+    } else {
+      current.prev.next = current.next;
     }
-    if (currNode === null) {
-      console.log('Item not found');
-      return;
+
+    //delete last node
+    if (current === this.tail) {
+      this.tail = current.prev;
+    } else {
+      current.next.prev = current.prev;
     }
-    currNode.prev.next = currNode.next;
-    currNode.next.prev = currNode.prev;
   }
 }
 
 
-function mainDll() {
-  let dll = new DoublyLinkedList();
+function displayList(list) {
+  let currNode = list.head;
+  while (currNode !== null) {
+    console.log(currNode.value);
+    currNode = currNode.next;
+  }
+}
+
+function size(lst) {
+  let counter = 0;
+  let currNode = lst.head;
+  if (!currNode) {
+    return counter;
+  }
+  else
+    counter++;
+  while (!(currNode.next == null)) {
+    counter++;
+    currNode = currNode.next;
+  }
+  return counter;
+}
+
+function reverseDLL(lst) {
+  let currNode = lst.head;
+  let tempNode = null;
+
+  while (currNode !== null) {
+    //swapping nodes
+    tempNode = currNode.next;
+    currNode.next = currNode.prev;
+    currNode.prev = tempNode;
+
+    currNode = tempNode;
+  }
+  tempNode = lst.head;
+  lst.head = lst.tail;
+  lst.tail = tempNode
+}
+
+function main() {
+
+  let dll = new DLinkedList();
   dll.insertFirst('Aquaria');
+  //add the following items in your doubly linked list.
+  //`Aquaria, Caprica, Gemenon, Picon, Sagittaron`
+
   dll.insertLast('Caprica');
   dll.insertLast('Gemenon');
   dll.insertLast('Picon');
   dll.insertLast('Sagittaron');
-  dll.insertLast('Tauron');
-  dll.remove('Picon');
-  display(dll)
-  testReverseDLL(dll)
-  display(dll)
+
+  //console.log(dll);
+
+  //* Add `Tauron` to the list
+  //* Remove `Picon` from the list
+
+  //dll.remove('Picon');
+  //console.log(size(dll));
+  //console.log(dll);
+  reverseDLL(dll);
+  console.log(dll);
+
 }
-
-function display(ll) {
-  console.log('_________________Linked list:_____________________');
-  let currNode = ll.head;
-  while (currNode.next !== null) {
-    console.log(currNode.value);
-    currNode = currNode.next;
-  }
-  console.log(currNode.value);
-}
-
-function reverseDLL(ll) {
-  let currNode = ll.head;
-  while (currNode.next !== null) {
-    let tempNode = currNode.next;
-    if (currNode.next.next !== null) {
-      currNode.next.next = currNode
-      currNode.next.prev = currNode.next.next
-    }
-
-
-
-    currNode.next.prev = currNode;
-    ll.head.prev = tempNode;
-    tempNode.next = ll.head;
-    tempNode.prev=null;
-    ll.head = tempNode;
-  }
-  return ll;
-}
-
-function testReverseDLL(ll) {
-  let currNode = ll.head;
-  while (currNode.next !== null) {
-    let tempNode = currNode.next;
-    if (currNode.next.next !== null) {
-      currNode.next.next.prev = currNode
-      currNode.next = currNode.next.next
-    }
-    else currNode.next = null;
-
-    tempNode.next = ll.head;
-    tempNode.prev = null;
-    ll.head.prev = tempNode;
-    ll.head = tempNode;
-  }
-  return ll;
-}
-
-mainDll();
+main();
